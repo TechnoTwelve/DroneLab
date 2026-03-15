@@ -20,7 +20,6 @@ import scenarios.WSNDataCollectionScenario;
 import simulation.SimulationRunner;
 import simulation.SimulationScenario;
 import ui.DashboardGui;
-
 import javax.swing.*;
 
 /**
