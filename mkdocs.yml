@@ -1,0 +1,82 @@
+site_name: DroneLab
+site_url: https://technotwelve.github.io/DroneLab/
+site_author: Tarek Uddin Ahmed
+site_description: >-
+  Discrete-event Java simulator for comparing UAV path planning strategies
+  in wireless sensor networks. Features a hybrid GA→ACO planner, frontier
+  exploration, and a live multi-panel Darcula-theme GUI.
+
+repo_name: TechnoTwelve/DroneLab
+repo_url: https://github.com/TechnoTwelve/DroneLab
+
+copyright: >-
+  Tarek Uddin Ahmed, Queen Mary University of London —
+  built on the original framework by Dr Umair Bilal Chaudhry.
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: teal
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: teal
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Interface Guide: interface.md
+  - Developer Guide: developer-guide.md
+  - API Reference: api.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/TechnoTwelve/DroneLab
