@@ -1,0 +1,214 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor #555
+}
+skinparam noteBackgroundColor #FFFFDD
+skinparam noteBorderColor #BBBB00
+
+title Legacy Architecture — UAV/WSN Codebase (Pre-Refactor)\n<size:11>All classes in the default package; no layering; ~4,200 lines total</size>
+
+' ── Classes ─────────────────────────────────────────────────────────────────
+
+class Run <<God Class>> {
+  + {static} main(String[])
+  ..Environment..
+  + create_environment(): int[][]
+  ..Simulation event loop..
+  + create_events()
+  ..Range scanning (O(w×h))..
+  - individual_distance(field[][], x, y, range)
+  - drone_distance(field[][], x, y)
+  - waypoint_distance(field[][], x, y)
+  - drone_to_waypoint_distance(field[][], ...)
+  - create_knowledge_base()
+  ..~1,750 lines total..
+}
+
+class Nodes {
+  + field: int[][]
+}
+
+class "Nodes.Node" as NodeInner {
+  + id: int
+  + x, y: int
+  + direction: int
+  + speed: int
+  ==Bug E: static caches==
+  + {static} drone_cache_from_waypoint: ArrayList
+  + {static} drone_direct_caching: ArrayList
+  + addNeighbour(id: int)
+  + seenByDrone()
+}
+
+class Events {
+  - head: EventNode
+  + append(time, nodeId, state)
+  + insertAfter(node, time, id, state)
+  ..hand-rolled sorted linked list..
+  ..O(n) insertion at arbitrary position..
+}
+
+class Movement {
+  + {static} move_north(field[][], id): void
+  + {static} move_south(field[][], id): void
+  + {static} move_east(field[][], id): void
+  + {static} move_west(field[][], id): void
+  + {static} move_northeast(field[][], id): void
+  + {static} move_northwest(field[][], id): void
+  + {static} move_southeast(field[][], id): void
+  + {static} move_southwest(field[][], id): void
+  + {static} dronemovement(field[][], ...): void
+  ..O(width × height) per call..
+  ..scans entire grid to find node by ID..
+}
+
+class MarkOvChain {
+  + state0(r: double): int
+  + state1(r: double): int
+  + state2(r: double): int
+  + state3(r: double): int
+  ..four separate methods per state..
+  ..no state constants defined..
+}
+
+class Ant {
+  - nodes: List<Node>
+  - tour: List<Node>
+  - visited: boolean[]
+  - pheromoneMatrix: double[][]
+  + constructTour(start: int)
+  ..Bug B: pheromone read as [to][from]..
+}
+
+class AntColonyOptimization {
+  - pheromones: double[][]
+  + run(gaRoute: Path, nodes: List<Node>): Path
+  ..Bug B: reversed index..
+  ..Bug D2: deposit uses per-step distance..
+  ..Bug D6: global evaporation missing..
+  ..sequential: one ant at a time..
+  ..evaporate after each individual ant..
+}
+
+class GeneticAlgorithm {
+  + run(nodes: List<Node>): Path
+}
+
+class Population {
+  - paths: ArrayList<Path>
+  + getFittest(): Path
+  + getPath(i): Path
+  + savePath(i, p: Path)
+  + size(): int
+}
+
+class Path {
+  ==Bug C: broken fitness cache==
+  - nodes: ArrayList
+  - fitness: double
+  - isFitnessChanged: boolean
+  ..isFitnessChanged reset by every..
+  ..getNodes() call — guard is dead code..
+  + getFitness(): double
+  + getNodes(): ArrayList
+  + setNodes(ArrayList)
+}
+
+class Node {
+  + id: int
+  + x: double
+  + y: double
+  + calculateDistance(other: Node): double
+}
+
+class Params {
+  + {static} POP_SIZE: int
+  + {static} MUTATION_RATE: double
+  + {static} TOURNAMENT_SIZE: int
+  + {static} ELITE_COUNT: int
+  + {static} GENERATION_COUNT: int
+  + {static} ANT_COUNT: int
+  + {static} PHEROMONE_INIT: double
+  + {static} Q: double
+  + {static} RHO: double
+  + {static} ALPHA: double
+  + {static} BETA: double
+  ..all 11 parameters as static finals..
+}
+
+class AtomicDouble {
+  - value: double
+  + get(): double
+  + set(v: double)
+}
+
+' ── Relationships ────────────────────────────────────────────────────────────
+
+Run "1" *-- "1" Nodes                   : creates grid & scans (O(w×h))
+Run "1" *-- "1" Events                  : schedules events
+Run ..> Movement                        : calls static methods
+Run ..> MarkOvChain                     : drives state transitions
+Run ..> GeneticAlgorithm               : triggers path planning
+Run ..> AntColonyOptimization          : triggers path planning
+Run ..> Params                         : reads constants
+
+Nodes +-- NodeInner                     : inner class
+
+GeneticAlgorithm --> Population        : creates & evolves
+GeneticAlgorithm ..> Params            : reads constants
+Population --> Path                    : contains
+
+AntColonyOptimization --> Ant          : creates one per iteration
+AntColonyOptimization ..> Params       : reads constants
+AntColonyOptimization --> Path         : returns best
+
+Ant --> Path                           : builds
+Ant --> Node                           : visits
+
+Path --> Node                          : contains
+
+' ── Annotations ──────────────────────────────────────────────────────────────
+
+note top of Run
+  Orchestrates everything:
+  environment setup, UAV patrol logic,
+  full event loop (~900 lines),
+  path-planning trigger, knowledge base,
+  range scanning, waypoint navigation.
+  No separation of concerns.
+end note
+
+note right of NodeInner
+  Bug E: static ArrayList fields are
+  shared across ALL node instances.
+  Per-node isolation is completely broken;
+  every node reads & writes the same list.
+end note
+
+note right of Path
+  Bug C: isFitnessChanged is set to false
+  on every call to getNodes(), making the
+  fitness-cache guard permanently dead code.
+  getFitness() always recomputes from scratch.
+end note
+
+note bottom of Movement
+  O(width × height) per move:
+  each method scans the entire field[][] to
+  locate the node by its integer ID before
+  computing the target cell.
+end note
+
+note bottom of AntColonyOptimization
+  Bug B: pheromone matrix indexed as
+  [to][from] in some paths — reversed.
+  Bug D2: deposit amount uses the distance
+  of the current step, not total tour length.
+  Bug D6: global evaporation never applied;
+  only per-edge decay after individual ants.
+end note
+
+@enduml

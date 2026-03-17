@@ -1,0 +1,1840 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Discrete-event Java simulator for comparing UAV path planning strategies in wireless sensor networks. Features a hybrid GA→ACO planner, frontier exploration, and a live multi-panel Darcula-theme GUI.">
+      
+      
+        <meta name="author" content="Tarek Uddin Ahmed">
+      
+      
+        <link rel="canonical" href="https://technotwelve.github.io/DroneLab/">
+      
+      
+      
+        <link rel="next" href="architecture/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>DroneLab</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dronelab-a-uavwsn-simulator" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="DroneLab" class="md-header__button md-logo" aria-label="DroneLab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DroneLab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/TechnoTwelve/DroneLab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    TechnoTwelve/DroneLab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architecture
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="interface/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Interface Guide
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="developer-guide/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Developer Guide
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="DroneLab" class="md-nav__button md-logo" aria-label="DroneLab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DroneLab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/TechnoTwelve/DroneLab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    TechnoTwelve/DroneLab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#paper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paper
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build &amp; Run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configproperties-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config.properties Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="config.properties Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simulationconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SimulationConfig
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intelligence-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intelligence Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Intelligence Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#patrol-predefined-patrol-predefinedpatrolintelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        patrol — Predefined Patrol (PredefinedPatrolIntelligence)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gaaco-autonomous-ga-aco-gaacointelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gaaco — Autonomous GA-ACO (GaAcoIntelligence)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#algorithm-configs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algorithm Configs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Algorithm Configs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gaacoconfig-algorithmgaacogaacoconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GaAcoConfig (algorithm.gaaco.GaAcoConfig)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uav-drive-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UAV Drive Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-intelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Intelligence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding a New Intelligence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-implement-uavintelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Implement UAVIntelligence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-register-in-appconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Register in AppConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-add-the-key-to-configproperties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Add the key to config.properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uavintelligence-interface-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UAVIntelligence interface contract
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-uav-methods-available-in-ontick" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key UAV methods available in onTick
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-home-automatic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Return-home (automatic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-pathplanner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New PathPlanner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#empirical-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Empirical Results
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interface Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="developer-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#paper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paper
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build &amp; Run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configproperties-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config.properties Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="config.properties Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simulationconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SimulationConfig
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intelligence-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intelligence Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Intelligence Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#patrol-predefined-patrol-predefinedpatrolintelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        patrol — Predefined Patrol (PredefinedPatrolIntelligence)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gaaco-autonomous-ga-aco-gaacointelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gaaco — Autonomous GA-ACO (GaAcoIntelligence)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#algorithm-configs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algorithm Configs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Algorithm Configs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gaacoconfig-algorithmgaacogaacoconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GaAcoConfig (algorithm.gaaco.GaAcoConfig)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uav-drive-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UAV Drive Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-intelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Intelligence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding a New Intelligence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-implement-uavintelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Implement UAVIntelligence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-register-in-appconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Register in AppConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-add-the-key-to-configproperties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Add the key to config.properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uavintelligence-interface-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UAVIntelligence interface contract
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-uav-methods-available-in-ontick" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key UAV methods available in onTick
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-home-automatic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Return-home (automatic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-pathplanner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New PathPlanner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#empirical-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Empirical Results
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="dronelab-a-uavwsn-simulator">DroneLab — A UAV/WSN Simulator<a class="headerlink" href="#dronelab-a-uavwsn-simulator" title="Permanent link">&para;</a></h1>
+<p>Discrete-event Java simulator for comparing UAV data-collection strategies in a
+wireless sensor network (WSN). Multiple intelligence strategies run side-by-side
+against the same randomly-generated field, and the results are compared in a
+ranked console report and a live multi-panel GUI.</p>
+<p><img alt="DroneLab — completed simulation showing Predefined Patrol vs Autonomous GA→ACO" src="docs/images/sim-full-1.png" /></p>
+<p><em>Predefined Patrol (left) vs Autonomous GA→ACO (right) — seed 42, 50 nodes, 1500×1500 field.
+GA→ACO collected 31/50 tokens (62%) vs patrol's 26/50 (52%). See the <a href="docs/interface.md">interface guide</a> for a full walkthrough of the UI.</em></p>
+<hr />
+<h2 id="paper">Paper<a class="headerlink" href="#paper" title="Permanent link">&para;</a></h2>
+<p>This simulator was built for and is described in:</p>
+<blockquote>
+<p><strong>Path Planning And Trajectory for UAVs</strong>
+Tarek Uddin Ahmed — MSc dissertation, Queen Mary University of London, 2022.
+<em>Preprint coming soon on arXiv.</em></p>
+</blockquote>
+<p>If you use this simulator in your research, please cite using the metadata in
+<a href="CITATION.cff"><code>CITATION.cff</code></a> (GitHub shows a <em>Cite this repository</em> button,
+or run <code>cffconvert</code> locally). Once the arXiv preprint is live, update the <code>url</code>
+field in <code>CITATION.cff</code> with the arXiv link.</p>
+<hr />
+<h2 id="credits">Credits<a class="headerlink" href="#credits" title="Permanent link">&para;</a></h2>
+<p><strong>Tarek Uddin Ahmed</strong> (<a href="https://github.com/TechnoTwelve">TechnoTwelve</a>) —
+MSc Artificial Intelligence, Queen Mary University of London. Designed and implemented the
+novel GA→ACO→LocalSearch path planning algorithm, the 8-way movement system,
+and the coverage-gated detour trigger. Refactored the codebase into the layered
+architecture documented here, and added the autonomous frontier exploration, GUI,
+and test suite.</p>
+<p><strong>Dr Umair Bilal Chaudhry</strong> — Dissertation supervisor (Queen Mary University of
+London) and author of the original simulation framework on which this work is
+built. The core event-driven simulation model, node mobility model, and predefined
+UAV trajectory with 4-way movement originate from his work. This project extends
+and refactors that foundation into a modular, extensible research platform.</p>
+<hr />
+<h2 id="build-run">Build &amp; Run<a class="headerlink" href="#build-run" title="Permanent link">&para;</a></h2>
+<p><strong>Prerequisites:</strong> Java 17+, Maven 3.6+ (or use IntelliJ IDEA — open as a Maven
+project and run <code>Main</code> directly).</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Build an executable JAR</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mvn<span class="w"> </span>package<span class="w"> </span>-DskipTests
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Run with GUI (default) — launches one panel per configured intelligence</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Run from the project root so config.properties is found in the working directory</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>java<span class="w"> </span>-jar<span class="w"> </span>target/drone-lab.jar
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Run headless — text-only output, faster for batch sweeps</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>java<span class="w"> </span>-jar<span class="w"> </span>target/drone-lab.jar<span class="w"> </span>--headless
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Run tests</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>mvn<span class="w"> </span><span class="nb">test</span>
+</span></code></pre></div>
+<p>The set of intelligences that run, and every simulation parameter, are
+controlled by <code>config.properties</code> at the project root.</p>
+<p>Architecture docs: <code>docs/architecture.md</code>
+UML diagram source: <code>docs/uml-refactored.puml</code> (paste at plantuml.com)</p>
+<hr />
+<h2 id="configproperties-reference">config.properties Reference<a class="headerlink" href="#configproperties-reference" title="Permanent link">&para;</a></h2>
+<p>All runtime toggles and simulation parameters live in <code>config.properties</code>.
+The file is loaded once at startup by <code>AppConfig</code> and applied globally.</p>
+<div class="language-properties highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># ------------ run settings ------------</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="na">run.headless</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s">false          # true = no GUI; false = show simulation panels</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="na">run.seed</span><span class="w">          </span><span class="o">=</span><span class="w">                </span><span class="s"># integer for reproducible RNG; leave empty for random</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="na">run.intelligences</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">patrol,gaaco   # comma-separated keys; each key runs one simulation pass</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># ------------ field &amp; nodes ------------</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="na">simulation.fieldWidth</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s">1500</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="na">simulation.fieldHeight</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">1500</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="na">simulation.nodeCount</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s">50</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="na">simulation.nodeIdStart</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">5000</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="na">simulation.nodeRange</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s">100</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="na">simulation.nodeMinSpeed</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="na">simulation.nodeMaxSpeed</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="c1"># ------------ drone ------------</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="na">simulation.droneRange</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s">140</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="na">simulation.dronePlacement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">72</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="na">simulation.droneSpeed</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="na">simulation.duration</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s">5434</span>
+</span></code></pre></div>
+<h3 id="key-properties">Key properties<a class="headerlink" href="#key-properties" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>run.headless</code></td>
+<td><code>false</code></td>
+<td>Skip the Swing GUI and print results only. Useful for automated sweeps.</td>
+</tr>
+<tr>
+<td><code>run.seed</code></td>
+<td><em>(empty)</em></td>
+<td>Integer seed applied to every pass in the run, ensuring all strategies face identical node layouts. Leave empty for a fresh random run each time.</td>
+</tr>
+<tr>
+<td><code>run.intelligences</code></td>
+<td><code>patrol,gaaco</code></td>
+<td>Comma-separated list of registered intelligence keys. Each key maps to one simulation pass. The console report ranks all strategies by tokens collected.</td>
+</tr>
+<tr>
+<td><code>simulation.fieldWidth</code> / <code>fieldHeight</code></td>
+<td><code>1500</code></td>
+<td>Simulation grid dimensions in cells.</td>
+</tr>
+<tr>
+<td><code>simulation.nodeCount</code></td>
+<td><code>50</code></td>
+<td>Sensor nodes deployed randomly at startup.</td>
+</tr>
+<tr>
+<td><code>simulation.nodeIdStart</code></td>
+<td><code>5000</code></td>
+<td>First node ID; nodes are numbered <code>5000, 5001, …</code>.</td>
+</tr>
+<tr>
+<td><code>simulation.nodeRange</code></td>
+<td><code>100</code></td>
+<td>Node-to-node detection radius. Used to build neighbour caches, which the UAV ingests transitively when it scans a node.</td>
+</tr>
+<tr>
+<td><code>simulation.nodeMinSpeed</code> / <code>nodeMaxSpeed</code></td>
+<td><code>1</code></td>
+<td>Uniform movement speed range for nodes (cells per tick).</td>
+</tr>
+<tr>
+<td><code>simulation.droneRange</code></td>
+<td><code>140</code></td>
+<td>UAV scan radius in cells. Also used as the <code>CoverageGrid</code> sector size — one sector per scan footprint.</td>
+</tr>
+<tr>
+<td><code>simulation.dronePlacement</code></td>
+<td><code>72</code></td>
+<td>UAV home row <em>and</em> column. Patrol corners sit near <code>(72, 72)</code>, <code>(72, 1428)</code>, etc.</td>
+</tr>
+<tr>
+<td><code>simulation.droneSpeed</code></td>
+<td><code>1</code></td>
+<td>UAV movement speed (cells per tick).</td>
+</tr>
+<tr>
+<td><code>simulation.duration</code></td>
+<td><code>5434</code></td>
+<td>Total simulation ticks (≈ one perimeter lap + 10).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="simulationconfig">SimulationConfig<a class="headerlink" href="#simulationconfig" title="Permanent link">&para;</a></h2>
+<p><code>AppConfig</code> reads <code>config.properties</code> and builds a <code>SimulationConfig</code>. For
+programmatic use call <code>SimulationConfig.defaults()</code> (which delegates to
+<code>AppConfig</code>) and override with <code>withXxx()</code> copy methods or via the builder:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// withXxx copy-and-override</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">SimulationConfig</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SimulationConfig</span><span class="p">.</span><span class="na">defaults</span><span class="p">()</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="p">.</span><span class="na">withDroneRange</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="p">.</span><span class="na">withNodeCount</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1">// Builder pattern</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">SimulationConfig</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SimulationConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="p">.</span><span class="na">fieldSize</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="w"> </span><span class="mi">2000</span><span class="p">)</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">.</span><span class="na">nodeCount</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="p">.</span><span class="na">droneRange</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="p">.</span><span class="na">duration</span><span class="p">(</span><span class="mi">8000L</span><span class="p">)</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</span></code></pre></div>
+<p><code>SimulationConfig</code> holds <strong>only environment parameters</strong> (field size, node
+mobility, drone physics). Algorithm-specific parameters such as planning
+thresholds, coverage gates, and route length limits live in the algorithm's
+own config class (e.g. <code>GaAcoConfig</code>).</p>
+<hr />
+<h2 id="intelligence-strategies">Intelligence Strategies<a class="headerlink" href="#intelligence-strategies" title="Permanent link">&para;</a></h2>
+<p>Each strategy is identified by a short key registered in <code>AppConfig.REGISTRY</code>
+and activated by adding that key to <code>run.intelligences</code> in <code>config.properties</code>.</p>
+<h3 id="patrol-predefined-patrol-predefinedpatrolintelligence"><code>patrol</code> — Predefined Patrol (<code>PredefinedPatrolIntelligence</code>)<a class="headerlink" href="#patrol-predefined-patrol-predefinedpatrolintelligence" title="Permanent link">&para;</a></h3>
+<p>Baseline strategy. The UAV follows a fixed W1→W2→W3→W4 corner loop for the
+entire run with no path planning. Useful as the comparison baseline.</p>
+<h3 id="gaaco-autonomous-ga-aco-gaacointelligence"><code>gaaco</code> — Autonomous GA-ACO (<code>GaAcoIntelligence</code>)<a class="headerlink" href="#gaaco-autonomous-ga-aco-gaacointelligence" title="Permanent link">&para;</a></h3>
+<p>Autonomous strategy that combines frontier-based exploration with a three-stage
+GA→ACO→LocalSearch path planner:</p>
+<ol>
+<li><strong>Frontier patrol</strong> — during <code>PATROL</code> mode, steers toward the nearest
+   unvisited <code>CoverageGrid</code> sector rather than looping fixed corners.</li>
+<li><strong>Coverage-gated replanning</strong> — triggers <code>replan(coverage)</code> once 40% of the
+   field is scanned and the KB reaches the planning threshold.</li>
+<li><strong>Scanned-sector filter</strong> — excludes nodes whose sector has already been
+   visited from the route, preventing local-minima re-routing.</li>
+</ol>
+<p>Config knob: <code>GaAcoConfig.defaults()</code> (see below).</p>
+<hr />
+<h2 id="algorithm-configs">Algorithm Configs<a class="headerlink" href="#algorithm-configs" title="Permanent link">&para;</a></h2>
+<h3 id="gaacoconfig-algorithmgaacogaacoconfig">GaAcoConfig (<code>algorithm.gaaco.GaAcoConfig</code>)<a class="headerlink" href="#gaacoconfig-algorithmgaacogaacoconfig" title="Permanent link">&para;</a></h3>
+<p>Hyperparameters for the GA→ACO→LocalSearch planner <strong>and</strong> the planning
+schedule used by <code>GaAcoIntelligence</code>. All fields are immutable; use
+<code>withXxx()</code> to produce single-field variants.</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">GaAcoConfig</span><span class="w"> </span><span class="n">alg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GaAcoConfig</span><span class="p">.</span><span class="na">defaults</span><span class="p">()</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="p">.</span><span class="na">withGenerationCount</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="p">.</span><span class="na">withPlanningThreshold</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</span></code></pre></div>
+<p><strong>GA parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>populationSize</code></td>
+<td><code>20</code></td>
+<td>Number of chromosomes in the GA population.</td>
+</tr>
+<tr>
+<td><code>generationCount</code></td>
+<td><code>15</code></td>
+<td>GA generations per <code>planRoute()</code> call.</td>
+</tr>
+<tr>
+<td><code>mutationRate</code></td>
+<td><code>0.09</code></td>
+<td>Probability of swap mutation per chromosome.</td>
+</tr>
+<tr>
+<td><code>tournamentSize</code></td>
+<td><code>2</code></td>
+<td>Candidates considered per GA tournament selection.</td>
+</tr>
+<tr>
+<td><code>eliteCount</code></td>
+<td><code>1</code></td>
+<td>Top chromosome(s) copied unchanged into the next generation.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ACO parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>antCount</code></td>
+<td><code>10</code></td>
+<td>ACO ants. Ant 1 seeds the pheromone matrix from the GA route; ants 2–N build tours concurrently.</td>
+</tr>
+<tr>
+<td><code>pheromoneInit</code></td>
+<td><code>0.2</code></td>
+<td>Uniform initial pheromone level τ₀ (must be in (0, 1)).</td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td><code>0.08</code></td>
+<td>Pheromone deposit constant. Deposit per edge = <code>q / tour_length</code>.</td>
+</tr>
+<tr>
+<td><code>rho</code></td>
+<td><code>0.2</code></td>
+<td>Pheromone evaporation rate per ACO iteration (0–1).</td>
+</tr>
+<tr>
+<td><code>alpha</code></td>
+<td><code>0.1</code></td>
+<td>Pheromone influence exponent (α).</td>
+</tr>
+<tr>
+<td><code>beta</code></td>
+<td><code>11.0</code></td>
+<td>Distance influence exponent (β). Higher values strongly prefer shorter edges.</td>
+</tr>
+<tr>
+<td><code>acoIterationCount</code></td>
+<td><code>5</code></td>
+<td>ACO ant-batch + pheromone-update cycles per <code>planRoute()</code> call.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Planning schedule</strong> (owned by <code>GaAcoIntelligence</code>, not <code>SimulationConfig</code>)</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>planningThreshold</code></td>
+<td><code>15</code></td>
+<td>Minimum KB node count before replanning fires.</td>
+</tr>
+<tr>
+<td><code>planningInterval</code></td>
+<td><code>25</code></td>
+<td>Minimum ticks between successive replan checks.</td>
+</tr>
+<tr>
+<td><code>minCoverageBeforePlan</code></td>
+<td><code>0.05</code></td>
+<td>Field fraction (0–1) that must be scanned before the first replan. Near-zero lets the first replan happen almost immediately.</td>
+</tr>
+<tr>
+<td><code>maxRouteWaypoints</code></td>
+<td><code>12</code></td>
+<td>Maximum waypoints per planned route. Compact routes complete in ~500–800 ticks.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="uav-drive-modes">UAV Drive Modes<a class="headerlink" href="#uav-drive-modes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Trigger</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PATROL</code></td>
+<td>Default at startup; after each route completes</td>
+<td>Steers to nearest unvisited <code>CoverageGrid</code> sector (autonomous intelligences) or falls back to the fixed W1→W2→W3→W4 corner loop when all sectors are covered (patrol baseline).</td>
+</tr>
+<tr>
+<td><code>EXECUTE</code></td>
+<td>After a successful <code>replan()</code></td>
+<td>Follows the planned route waypoint by waypoint using predictive interception. Reverts to <code>PATROL</code> when the last waypoint is reached.</td>
+</tr>
+<tr>
+<td><code>RETURN_HOME</code></td>
+<td>When remaining ticks ≤ Chebyshev distance to home + 10</td>
+<td>Navigates directly back to <code>(dronePlacement, dronePlacement)</code>. Triggered universally by <code>SimulationRunner</code> for all strategies. No frontier steering or replanning fires in this mode.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="adding-a-new-intelligence">Adding a New Intelligence<a class="headerlink" href="#adding-a-new-intelligence" title="Permanent link">&para;</a></h2>
+<p>Three steps — no changes to <code>UAV</code>, <code>SimulationRunner</code>, <code>Main</code>, or the GUI.</p>
+<h3 id="step-1-implement-uavintelligence">Step 1 — Implement <code>UAVIntelligence</code><a class="headerlink" href="#step-1-implement-uavintelligence" title="Permanent link">&para;</a></h3>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">intelligence</span><span class="p">;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">algorithm.Route</span><span class="p">;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">algorithm.gaaco.GaAcoConfig</span><span class="p">;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">simulation.*</span><span class="p">;</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyIntelligence</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">UAVIntelligence</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">SimulationConfig</span><span class="w"> </span><span class="n">config</span><span class="p">;</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">GaAcoConfig</span><span class="w">      </span><span class="n">algConfig</span><span class="p">;</span><span class="w">   </span><span class="c1">// owns planning-schedule knobs</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">CoverageGrid</span><span class="w">     </span><span class="n">coverage</span><span class="p">;</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">MyIntelligence</span><span class="p">(</span><span class="n">SimulationConfig</span><span class="w"> </span><span class="n">config</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">config</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">;</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">algConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GaAcoConfig</span><span class="p">.</span><span class="na">defaults</span><span class="p">();</span><span class="w">  </span><span class="c1">// or accept via constructor</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">coverage</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CoverageGrid</span><span class="p">(</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">            </span><span class="n">config</span><span class="p">.</span><span class="na">getFieldWidth</span><span class="p">(),</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">            </span><span class="n">config</span><span class="p">.</span><span class="na">getFieldHeight</span><span class="p">(),</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">            </span><span class="n">config</span><span class="p">.</span><span class="na">getDroneRange</span><span class="p">());</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">    </span><span class="nd">@Override</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Route</span><span class="w"> </span><span class="nf">onTick</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">tick</span><span class="p">,</span><span class="w"> </span><span class="n">UAV</span><span class="w"> </span><span class="n">uav</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">env</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">        </span><span class="c1">// Track coverage every tick (including EXECUTE mode)</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">        </span><span class="n">coverage</span><span class="p">.</span><span class="na">markScanned</span><span class="p">(</span><span class="n">uav</span><span class="p">.</span><span class="na">getX</span><span class="p">(),</span><span class="w"> </span><span class="n">uav</span><span class="p">.</span><span class="na">getY</span><span class="p">(),</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getDroneRange</span><span class="p">());</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="w">        </span><span class="c1">// Steer toward unvisited sectors during PATROL</span>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uav</span><span class="p">.</span><span class="na">getDriveMode</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">UAV</span><span class="p">.</span><span class="na">DriveMode</span><span class="p">.</span><span class="na">PATROL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="w">            </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">frontier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">coverage</span><span class="p">.</span><span class="na">nearestUnvisitedCenter</span><span class="p">(</span><span class="n">uav</span><span class="p">.</span><span class="na">getX</span><span class="p">(),</span><span class="w"> </span><span class="n">uav</span><span class="p">.</span><span class="na">getY</span><span class="p">());</span>
+</span><span id="__span-4-30"><a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">frontier</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">uav</span><span class="p">.</span><span class="na">setExplorationTarget</span><span class="p">(</span><span class="n">frontier</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">frontier</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">);</span>
+</span><span id="__span-4-31"><a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="w">            </span><span class="k">else</span><span class="w">                  </span><span class="n">uav</span><span class="p">.</span><span class="na">clearExplorationTarget</span><span class="p">();</span>
+</span><span id="__span-4-32"><a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-4-33"><a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a>
+</span><span id="__span-4-34"><a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a><span class="w">        </span><span class="c1">// Replan when coverage and KB thresholds are met.</span>
+</span><span id="__span-4-35"><a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a><span class="w">        </span><span class="c1">// Planning-schedule knobs (threshold, interval, coverage gate, max waypoints)</span>
+</span><span id="__span-4-36"><a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a><span class="w">        </span><span class="c1">// live on GaAcoConfig, not SimulationConfig.</span>
+</span><span id="__span-4-37"><a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uav</span><span class="p">.</span><span class="na">getDriveMode</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">UAV</span><span class="p">.</span><span class="na">DriveMode</span><span class="p">.</span><span class="na">PATROL</span>
+</span><span id="__span-4-38"><a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a><span class="w">                </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">uav</span><span class="p">.</span><span class="na">getKnowledgeBase</span><span class="p">().</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">algConfig</span><span class="p">.</span><span class="na">getPlanningThreshold</span><span class="p">()</span>
+</span><span id="__span-4-39"><a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a><span class="w">                </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">tick</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">algConfig</span><span class="p">.</span><span class="na">getPlanningInterval</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-4-40"><a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a><span class="w">                </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">coverage</span><span class="p">.</span><span class="na">coverageFraction</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">algConfig</span><span class="p">.</span><span class="na">getMinCoverageBeforePlan</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-41"><a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">uav</span><span class="p">.</span><span class="na">replan</span><span class="p">(</span><span class="n">coverage</span><span class="p">);</span><span class="w">  </span><span class="c1">// pass coverage to exclude scanned sectors</span>
+</span><span id="__span-4-42"><a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-4-43"><a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a>
+</span><span id="__span-4-44"><a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+</span><span id="__span-4-45"><a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-46"><a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a>
+</span><span id="__span-4-47"><a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a><span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getLabel</span><span class="p">()</span><span class="w">             </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;My Intelligence&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-4-48"><a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a><span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="n">CoverageGrid</span><span class="w"> </span><span class="nf">getCoverageGrid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">coverage</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-4-49"><a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="step-2-register-in-appconfig">Step 2 — Register in <code>AppConfig</code><a class="headerlink" href="#step-2-register-in-appconfig" title="Permanent link">&para;</a></h3>
+<p>Open <code>src/main/java/config/AppConfig.java</code> and add one line to the static initialiser:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">static</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="n">REGISTRY</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;patrol&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sim</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PredefinedPatrolIntelligence</span><span class="p">());</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">REGISTRY</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;gaaco&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">sim</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">GaAcoIntelligence</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span><span class="w"> </span><span class="n">GaAcoConfig</span><span class="p">.</span><span class="na">defaults</span><span class="p">()));</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">REGISTRY</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;mine&quot;</span><span class="p">,</span><span class="w">   </span><span class="n">sim</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MyIntelligence</span><span class="p">(</span><span class="n">sim</span><span class="p">));</span><span class="w">   </span><span class="c1">// ← add this</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="step-3-add-the-key-to-configproperties">Step 3 — Add the key to <code>config.properties</code><a class="headerlink" href="#step-3-add-the-key-to-configproperties" title="Permanent link">&para;</a></h3>
+<div class="language-properties highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="na">run.intelligences</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">patrol,gaaco,mine</span>
+</span></code></pre></div>
+<p>The GUI gains a new panel automatically; the console report includes the new
+strategy in the ranked comparison.</p>
+<hr />
+<h3 id="uavintelligence-interface-contract">UAVIntelligence interface contract<a class="headerlink" href="#uavintelligence-interface-contract" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>onTick(tick, uav, env): Route</code></td>
+<td>Yes</td>
+<td>Return a <code>Route</code> to activate it immediately; return <code>null</code> to keep current behaviour. Called after <code>uav.scan()</code> and <code>uav.moveStep()</code>.</td>
+</tr>
+<tr>
+<td><code>getLabel(): String</code></td>
+<td>Yes</td>
+<td>Name shown in the console report and GUI sidebar.</td>
+</tr>
+<tr>
+<td><code>getCoverageGrid(): CoverageGrid</code></td>
+<td>No (default <code>null</code>)</td>
+<td>Override to expose your coverage tracker to the GUI and final statistics.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-uav-methods-available-in-ontick">Key UAV methods available in <code>onTick</code><a class="headerlink" href="#key-uav-methods-available-in-ontick" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uav.getDriveMode()</code></td>
+<td><code>PATROL</code>, <code>EXECUTE</code>, or <code>RETURN_HOME</code>. Guard all replanning on <code>PATROL</code>.</td>
+</tr>
+<tr>
+<td><code>uav.getKnowledgeBase().size()</code></td>
+<td>Number of nodes currently known to the UAV.</td>
+</tr>
+<tr>
+<td><code>uav.getKnowledgeBase().snapshot()</code></td>
+<td>Unmodifiable <code>List&lt;SensorNode&gt;</code> of all known nodes.</td>
+</tr>
+<tr>
+<td><code>uav.isTokenized(nodeId)</code></td>
+<td>Whether a node has already been directly scanned.</td>
+</tr>
+<tr>
+<td><code>uav.getX()</code> / <code>uav.getY()</code></td>
+<td>Current UAV position (row, column).</td>
+</tr>
+<tr>
+<td><code>uav.getTotalTokens()</code></td>
+<td>Total unique direct-scan contacts collected so far.</td>
+</tr>
+<tr>
+<td><code>uav.replan()</code></td>
+<td>Plan a route from untokenized KB nodes; no sector filter.</td>
+</tr>
+<tr>
+<td><code>uav.replan(coverage)</code></td>
+<td>Plan a route, additionally excluding nodes in already-scanned sectors. Recommended to avoid local minima.</td>
+</tr>
+<tr>
+<td><code>uav.setExplorationTarget(x, y)</code></td>
+<td>Steer the UAV toward <code>(x, y)</code> during <code>PATROL</code>.</td>
+</tr>
+<tr>
+<td><code>uav.clearExplorationTarget()</code></td>
+<td>Revert to the fixed four-corner patrol loop.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="return-home-automatic">Return-home (automatic)<a class="headerlink" href="#return-home-automatic" title="Permanent link">&para;</a></h3>
+<p><code>SimulationRunner</code> automatically calls <code>uav.returnHome()</code> for every intelligence
+when remaining ticks ≤ Chebyshev distance to the home cell + 10. The
+<code>PATROL</code> mode guard in your <code>onTick</code> already prevents frontier steering and
+replanning from firing during <code>RETURN_HOME</code>.</p>
+<hr />
+<h2 id="adding-a-new-pathplanner">Adding a New PathPlanner<a class="headerlink" href="#adding-a-new-pathplanner" title="Permanent link">&para;</a></h2>
+<p><code>PathPlanner</code> (<code>src/algorithm/PathPlanner.java</code>) is the interface for route
+optimisation. Implement it to swap in a different algorithm:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">algorithm</span><span class="p">;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">domain.SensorNode</span><span class="p">;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">GreedyNearestNeighbour</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">PathPlanner</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="nd">@Override</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Route</span><span class="w"> </span><span class="nf">planRoute</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">SensorNode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">nodes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span><span class="c1">// Build a greedy nearest-neighbour tour.</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">        </span><span class="c1">// Route is constructed as: new Route(orderedList)</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Route</span><span class="p">(</span><span class="n">nodes</span><span class="p">);</span><span class="w"> </span><span class="c1">// placeholder</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Inject it into the UAV via <code>SimulationRunner.runOnce()</code> (replace
+<code>new GaAcoPlanner(...)</code>):</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">PathPlanner</span><span class="w"> </span><span class="n">planner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">GreedyNearestNeighbour</span><span class="p">();</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">UAV</span><span class="w"> </span><span class="n">uav</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UAV</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">planner</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>UAV</code> has no knowledge of the concrete planner — it calls only
+<code>planner.planRoute(List&lt;SensorNode&gt;)</code> through the interface.</p>
+<hr />
+<h2 id="project-structure">Project Structure<a class="headerlink" href="#project-structure" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>pom.xml                              Maven build (Java 17, JUnit 5, executable JAR)
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>config.properties                    Runtime configuration (run settings, field/drone params)
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>src/
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  main/
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    java/
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>      Main.java                      Entry point (loads AppConfig, builds GUI, starts runner)
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>      config/
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>        AppConfig.java               Intelligence registry + config.properties loader
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>      domain/
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>        SensorNode.java              Immutable node value object (position + velocity)
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>      algorithm/
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>        PathPlanner.java             Strategy interface: planRoute(List&lt;SensorNode&gt;): Route
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>        Route.java                   Immutable ordered node sequence (fitness precomputed)
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>        gaaco/
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>          GaAcoConfig.java           GA-ACO + planning-schedule hyperparameters (withXxx)
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>          GaAcoPlanner.java          Three-stage GA -&gt; ACO -&gt; LocalSearch pipeline
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>          GeneticAlgorithm.java      Tournament selection, order crossover, swap mutation, 2-opt
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>          AntColonyOptimization.java Concurrent ACO with pheromone snapshot
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>          LocalSearch.java           2-opt + or-opt post-processing
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>          PheromoneMatrix.java       Pheromone state with defensive-copy snapshot()
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>          Population.java            Mutable chromosome container for GA
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>      simulation/
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>        SimulationConfig.java        Immutable environment parameters (field, nodes, drone)
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>        SimulationRunner.java        Discrete-event loop + N-strategy comparison + ranking
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>        UAV.java                     Drone entity (scan, move, replan, return-home)
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>        UAVIntelligence.java         Strategy interface for per-tick UAV behaviour
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>        CoverageGrid.java            Sector-based field coverage tracker + frontier query
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>        KnowledgeBase.java           Per-UAV node accumulator (observe, snapshot)
+</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>        Environment.java             Grid + agent registry (O(n) range queries)
+</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>        NodeAgent.java               Mutable simulation entity (live position, neighbour cache)
+</span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>        NodeMover.java               O(1) grid movement helper
+</span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>        NodeDeploymentStrategy.java  Strategy interface for initial node placement
+</span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>        EventScheduler.java          Priority-queue event scheduler (O(log n))
+</span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>        MovementStrategy.java        Strategy interface for mobility models
+</span><span id="__span-9-35"><a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a>        SimulationScenario.java      Scenario wiring (UAV + planner + intelligence list)
+</span><span id="__span-9-36"><a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a>      movement/
+</span><span id="__span-9-37"><a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a>        MarkovChain.java             Markov transition matrix (levyWalk, exploratoryWalk)
+</span><span id="__span-9-38"><a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a>        LevyWalkStrategy.java        Configurable Markov walk (implements MovementStrategy)
+</span><span id="__span-9-39"><a id="__codelineno-9-39" name="__codelineno-9-39" href="#__codelineno-9-39"></a>      intelligence/
+</span><span id="__span-9-40"><a id="__codelineno-9-40" name="__codelineno-9-40" href="#__codelineno-9-40"></a>        PredefinedPatrolIntelligence.java  Baseline: fixed 4-corner patrol, no planning
+</span><span id="__span-9-41"><a id="__codelineno-9-41" name="__codelineno-9-41" href="#__codelineno-9-41"></a>        GaAcoIntelligence.java             Autonomous: frontier exploration + gated GA-ACO replan
+</span><span id="__span-9-42"><a id="__codelineno-9-42" name="__codelineno-9-42" href="#__codelineno-9-42"></a>      ui/
+</span><span id="__span-9-43"><a id="__codelineno-9-43" name="__codelineno-9-43" href="#__codelineno-9-43"></a>        SimulationGui.java           JFrame with N panels (one per intelligence) + stats sidebar
+</span><span id="__span-9-44"><a id="__codelineno-9-44" name="__codelineno-9-44" href="#__codelineno-9-44"></a>        SimulationPanel.java         Custom dark-theme renderer (nodes, UAV, routes, coverage)
+</span><span id="__span-9-45"><a id="__codelineno-9-45" name="__codelineno-9-45" href="#__codelineno-9-45"></a>        SimulationSnapshot.java      Immutable state copy for EDT rendering
+</span><span id="__span-9-46"><a id="__codelineno-9-46" name="__codelineno-9-46" href="#__codelineno-9-46"></a>        VisualizationListener.java   @FunctionalInterface GUI callback: onTick(SimulationSnapshot)
+</span><span id="__span-9-47"><a id="__codelineno-9-47" name="__codelineno-9-47" href="#__codelineno-9-47"></a>      algorithmTest/
+</span><span id="__span-9-48"><a id="__codelineno-9-48" name="__codelineno-9-48" href="#__codelineno-9-48"></a>        GaAcoTest.java               Self-contained GA-ACO demo (run via IntelliJ or mvn exec)
+</span><span id="__span-9-49"><a id="__codelineno-9-49" name="__codelineno-9-49" href="#__codelineno-9-49"></a>      scenarios/
+</span><span id="__span-9-50"><a id="__codelineno-9-50" name="__codelineno-9-50" href="#__codelineno-9-50"></a>        WSNDataCollectionScenario.java  Wires the default WSN data-collection scenario
+</span><span id="__span-9-51"><a id="__codelineno-9-51" name="__codelineno-9-51" href="#__codelineno-9-51"></a>    resources/
+</span><span id="__span-9-52"><a id="__codelineno-9-52" name="__codelineno-9-52" href="#__codelineno-9-52"></a>      config.properties              Bundled defaults (overridden by the root config.properties)
+</span><span id="__span-9-53"><a id="__codelineno-9-53" name="__codelineno-9-53" href="#__codelineno-9-53"></a>  test/
+</span><span id="__span-9-54"><a id="__codelineno-9-54" name="__codelineno-9-54" href="#__codelineno-9-54"></a>    java/
+</span><span id="__span-9-55"><a id="__codelineno-9-55" name="__codelineno-9-55" href="#__codelineno-9-55"></a>      algorithm/
+</span><span id="__span-9-56"><a id="__codelineno-9-56" name="__codelineno-9-56" href="#__codelineno-9-56"></a>        RouteTest.java               Unit tests for Route (fitness, ordering, edge cases)
+</span><span id="__span-9-57"><a id="__codelineno-9-57" name="__codelineno-9-57" href="#__codelineno-9-57"></a>        MarkovChainTest.java         (placeholder — tests live in simulation/)
+</span><span id="__span-9-58"><a id="__codelineno-9-58" name="__codelineno-9-58" href="#__codelineno-9-58"></a>      simulation/
+</span><span id="__span-9-59"><a id="__codelineno-9-59" name="__codelineno-9-59" href="#__codelineno-9-59"></a>        MarkovChainTest.java         Unit tests for MarkovChain transition probabilities
+</span><span id="__span-9-60"><a id="__codelineno-9-60" name="__codelineno-9-60" href="#__codelineno-9-60"></a>        EnvironmentTest.java         Unit tests for Environment range queries
+</span><span id="__span-9-61"><a id="__codelineno-9-61" name="__codelineno-9-61" href="#__codelineno-9-61"></a>        NodeMoverTest.java           Unit tests for NodeMover grid movement
+</span><span id="__span-9-62"><a id="__codelineno-9-62" name="__codelineno-9-62" href="#__codelineno-9-62"></a>docs/
+</span><span id="__span-9-63"><a id="__codelineno-9-63" name="__codelineno-9-63" href="#__codelineno-9-63"></a>  architecture.md                    Full architecture documentation
+</span><span id="__span-9-64"><a id="__codelineno-9-64" name="__codelineno-9-64" href="#__codelineno-9-64"></a>  uml-refactored.puml                PlantUML class diagram (paste at plantuml.com)
+</span><span id="__span-9-65"><a id="__codelineno-9-65" name="__codelineno-9-65" href="#__codelineno-9-65"></a>  uml-legacy.puml                    PlantUML class diagram (legacy monolithic code)
+</span></code></pre></div>
+<hr />
+<h2 id="empirical-results">Empirical Results<a class="headerlink" href="#empirical-results" title="Permanent link">&para;</a></h2>
+<p><strong>50-node, 1500 × 1500 field, droneRange = 140, 20-seed sweep</strong></p>
+<ul>
+<li>GA-ACO wins 16/20 seeds vs. predefined patrol</li>
+<li>Average improvement: <strong>+17.84 %</strong> more tokens collected vs. patrol baseline</li>
+</ul>
+<p>The autonomous UA's advantage comes from three mechanisms working together:</p>
+<ol>
+<li><strong>Frontier exploration</strong> — systematic full-field coverage instead of
+   perimeter-only patrol</li>
+<li><strong>Coverage gate</strong> — waits until 40 % of field is scanned before committing
+   to routes</li>
+<li><strong>Scanned-sector filter in replan</strong> — prevents re-routing to
+   already-explored regions, eliminating local-minima loops</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+        
+          
+          <a href="architecture/" class="md-footer__link md-footer__link--next" aria-label="Next: Architecture">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Architecture
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Tarek Uddin Ahmed, Queen Mary University of London — built on the original framework by Dr Umair Bilal Chaudhry.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/TechnoTwelve/DroneLab" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

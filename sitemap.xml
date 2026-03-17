@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://technotwelve.github.io/DroneLab/</loc>
+         <lastmod>2026-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://technotwelve.github.io/DroneLab/api/</loc>
+         <lastmod>2026-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://technotwelve.github.io/DroneLab/architecture/</loc>
+         <lastmod>2026-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://technotwelve.github.io/DroneLab/developer-guide/</loc>
+         <lastmod>2026-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://technotwelve.github.io/DroneLab/interface/</loc>
+         <lastmod>2026-03-17</lastmod>
+    </url>
+</urlset>
