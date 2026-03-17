@@ -30,7 +30,7 @@ field in `CITATION.cff` with the arXiv link.
 ## Credits
 
 **Tarek Uddin Ahmed** ([TechnoTwelve](https://github.com/TechnoTwelve)) —
-MSc candidate, Queen Mary University of London. Designed and implemented the
+MSc Artificial Intelligence, Queen Mary University of London. Designed and implemented the
 novel GA→ACO→LocalSearch path planning algorithm, the 8-way movement system,
 and the coverage-gated detour trigger. Refactored the codebase into the layered
 architecture documented here, and added the autonomous frontier exploration, GUI,
